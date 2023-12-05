@@ -1,1 +1,49 @@
+spring:
+  #  main:
+  #    web-application-type: none
 
+  datasource:
+    url: jdbc:postgresql://3.37.220.254:5432/keycloakdb
+    username: gustjtmd
+    password: djf1rnf
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        show-sql: true
+        format_sql: true
+        use_sql_comments: true
+    show-sql: true
+    defer-datasource-initialization: true
+
+  #logging:
+  #  level:
+  #    org:
+  #      hibernate:
+  #        SQL: debug
+  #        type: trace
+  #    root: error
+
+  data:
+    web:
+      pageable:
+        max-page-size: 2000
+        default-page-size: 20
+        one-indexed-parameters: true
+
+
+#keycloak:
+#  enabled: true
+#  realm: blog_service
+#  auth-server-url: 3.37.220.254:5010/auth
+#  ssl-required: none # 기본값은 외부 요청에 HTTPS가 기본적으로 필요하다는 외부 의미 유효한 값은 'all', 'external', 'none'
+#  resource: blog-client
+#  credentials:
+#    secret: Kr0mcs00MidXHzEZL4UeZ1nXp80zclQM
+#  use-resource-role-mappings: true
+#  bearer-only: true

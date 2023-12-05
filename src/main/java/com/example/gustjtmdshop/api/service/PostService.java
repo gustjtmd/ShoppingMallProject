@@ -1,12 +1,19 @@
 package com.example.gustjtmdshop.api.service;
 
 import com.example.gustjtmdshop.api.domain.Post;
+import com.example.gustjtmdshop.api.domain.PostEditor;
+import com.example.gustjtmdshop.api.exception.PostNotFound;
 import com.example.gustjtmdshop.api.repository.PostRepository;
 import com.example.gustjtmdshop.api.request.PostCreate;
+import com.example.gustjtmdshop.api.request.PostEdit;
+import com.example.gustjtmdshop.api.request.PostSearch;
 import com.example.gustjtmdshop.api.response.PostResponse;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -15,32 +22,50 @@ public class PostService {
 
     private final PostRepository postRepository;
 
-    // Case1. 저장한 데이터 Entity -> response로 응답하기
-    // return postRepository.save(post);
-
-    // Case2. 저장한 데이터의 primary_id -> response 응답하기
-    // Client에서는 수신한 id를 post 글 조회 API를 통해서 글 데이터를 수신받음
-    // return post.getId();
     public void write(PostCreate postCreate) {
         Post post = Post.builder()
-                        .title(postCreate.getTitle())
-                        .content(postCreate.getContent())
-                        .build();
-        postRepository.save(post);
+                .title(postCreate.getTitle())
+                .content(postCreate.getContent())
+                .build();
 
+        postRepository.save(post);
     }
 
-    public PostResponse get(Long id){
+    public PostResponse get(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(PostNotFound::new);
 
-        PostResponse response = PostResponse.builder()
+        return PostResponse.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .build();
-
-        return response;
     }
 
+    public List<PostResponse> getList(PostSearch postSearch) {
+        return postRepository.getList(postSearch).stream()
+                .map(PostResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void edit(Long id, PostEdit postEdit) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(PostNotFound::new);
+
+        PostEditor.PostEditorBuilder editorBuilder = post.toEditor();
+
+        PostEditor postEditor = editorBuilder.title(postEdit.getTitle())
+                .content(postEdit.getContent())
+                .build();
+
+        post.edit(postEditor);
+    }
+
+    public void delete(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(PostNotFound::new);
+
+        postRepository.delete(post);
+    }
 }
