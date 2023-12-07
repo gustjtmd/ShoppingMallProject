@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 public enum UserRole {
 
     admin("관리자"),
-    user("사용자");
+    member("사용자");
 
 
     private final String title;

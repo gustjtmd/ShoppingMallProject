@@ -48,7 +48,8 @@ public class AuthService {
         // 유저정보 세팅
         UserRepresentation user = new UserRepresentation();
         user.setEnabled(true);
-        user.setUsername(userDto.getEmail());
+        user.setUsername(userDto.getUsername());
+        user.setEmail(userDto.getEmail());
 
         // Get realm
         RealmResource realmResource = keycloak.realm(realm);
