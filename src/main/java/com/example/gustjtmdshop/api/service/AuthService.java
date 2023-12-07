@@ -48,7 +48,7 @@ public class AuthService {
         // 유저정보 세팅
         UserRepresentation user = new UserRepresentation();
         user.setEnabled(true);
-        user.setUsername(userDto.getUsername());
+        user.setUsername(userDto.getUserId());
         user.setEmail(userDto.getEmail());
 
         // Get realm
@@ -94,7 +94,7 @@ public class AuthService {
         AuthzClient authzClient = AuthzClient.create(configuration);
 
         AccessTokenResponse response =
-                authzClient.obtainAccessToken(userDto.getEmail(), userDto.getPassword());
+                authzClient.obtainAccessToken(userDto.getUserId(), userDto.getPassword());
 
         return response;
     }
