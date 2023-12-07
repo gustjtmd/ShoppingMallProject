@@ -1,7 +1,9 @@
 package com.example.gustjtmdshop.api.response;
 
 
+import com.example.gustjtmdshop.api.BaseTimeEntity;
 import com.example.gustjtmdshop.api.domain.Post;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,11 +13,12 @@ import lombok.Getter;
  */
 
 @Getter
-public class PostResponse {
+public class PostResponse extends BaseTimeEntity {
 
     private final Long id;
     private final String title;
     private final String content;
+
 
     // 생성자 오버로딩
     public PostResponse(Post post) {
