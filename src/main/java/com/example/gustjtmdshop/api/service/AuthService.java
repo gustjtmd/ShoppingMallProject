@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status.Family;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
@@ -48,7 +50,7 @@ public class AuthService {
         // 유저정보 세팅
         UserRepresentation user = new UserRepresentation();
         user.setEnabled(true);
-        user.setUsername(userDto.getUserId());
+        user.setUsername(userDto.getUserName());
         user.setEmail(userDto.getEmail());
 
         // Get realm
@@ -56,7 +58,7 @@ public class AuthService {
         UsersResource usersResource = realmResource.users();
 
         Response response = usersResource.create(user);
-        if(response.getStatus() == 201) {
+        if (response.getStatus() == 201) {
 
             String userId = CreatedResponseUtil.getCreatedId(response);
 
@@ -72,9 +74,12 @@ public class AuthService {
             userResource.resetPassword(passwordCred);
 
             // role 세팅
-            ClientRepresentation clientRep = realmResource.clients().findByClientId(clientId).get(0);
-            RoleRepresentation clientRoleRep = realmResource.clients().get(clientRep.getId()).roles().get(userDto.getUserRole().getCode()).toRepresentation();
+            ClientRepresentation clientRep = realmResource.clients().findByClientId(clientId)
+                    .get(0);
+            RoleRepresentation clientRoleRep = realmResource.clients().get(clientRep.getId())
+                    .roles().get(userDto.getUserRole().getCode()).toRepresentation();
             userResource.roles().clientLevel(clientRep.getId()).add(Arrays.asList(clientRoleRep));
+
 
         }
 
@@ -94,7 +99,7 @@ public class AuthService {
         AuthzClient authzClient = AuthzClient.create(configuration);
 
         AccessTokenResponse response =
-                authzClient.obtainAccessToken(userDto.getUserId(), userDto.getPassword());
+                authzClient.obtainAccessToken(userDto.getUserName(), userDto.getPassword());
 
         return response;
     }
@@ -106,7 +111,7 @@ public class AuthService {
 
         List<UserRepresentation> search = keycloak.realm(realm).users()
                 .search(userName);
-        if(search.size() > 0){
+        if (search.size() > 0) {
             log.debug("search : {}", search.get(0).getUsername());
             return true;
         }

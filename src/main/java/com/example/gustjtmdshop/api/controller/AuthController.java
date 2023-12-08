@@ -25,7 +25,7 @@ public class AuthController {
      * */
     @PostMapping("/signup")
     public ResponseEntity registerUser(@RequestBody UserDto userDto) {
-        if(authService.existsByUsername(userDto.getUserId())) {
+        if(authService.existsByUsername(userDto.getUserName())) {
             return ResponseEntity.ok("유저가 존재합니다.");
         }
 
