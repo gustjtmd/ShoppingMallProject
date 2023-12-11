@@ -80,6 +80,15 @@ public class AuthService {
                     .roles().get(userDto.getUserRole().getCode()).toRepresentation();
             userResource.roles().clientLevel(clientRep.getId()).add(Arrays.asList(clientRoleRep));
 
+            GroupRepresentation groupRep = realmResource.groups().groups().stream()
+                    .filter(group -> group.getName().equals("admin"))
+                    .findFirst()
+                    .orElse(null);
+
+            if (groupRep != null) {
+                // Add user to the group
+                userResource.joinGroup(groupRep.getId());
+            }
 
         }
 

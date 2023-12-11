@@ -1,5 +1,6 @@
 package com.example.gustjtmdshop.api.request;
 
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -12,6 +13,8 @@ public class UserDto {
 
     @NotNull
     private UserRole userRole;
+
+    private List<String> groups;
 
     private int status;
 

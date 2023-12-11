@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,10 +45,18 @@ public class PostService {
                 .build();
     }
 
-    public List<PostResponse> getList(PostSearch postSearch) {
-        return postRepository.getList(postSearch).stream()
-                .map(PostResponse::new)
-                .collect(Collectors.toList());
+    public Page<Post> getList(int page, int size, String sortField, String sortOrder) {
+
+        Sort sort;
+
+        if ("desc".equalsIgnoreCase(sortOrder)) {
+            sort = Sort.by(Sort.Order.desc(sortField));
+        } else {
+            sort = Sort.by(Sort.Order.asc(sortField));
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+        return postRepository.findAll(pageRequest);
     }
 
     @Transactional

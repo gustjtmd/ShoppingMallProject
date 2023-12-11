@@ -9,6 +9,7 @@ import com.example.gustjtmdshop.api.service.PostService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -34,8 +35,13 @@ public class PostController {
     }
 
     @GetMapping("/posts")
-    public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) {
-        return postService.getList(postSearch);
+    public Page<Post> getList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortField,
+            @RequestParam(defaultValue = "desc") String sortOrder
+            ) {
+        return postService.getList(page, size, sortField, sortOrder);
     }
 
     @PatchMapping("/posts/{postId}")
